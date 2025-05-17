@@ -39,7 +39,14 @@ export async function signup(req, res) {
 
   try {
     if (!fullName || !email || !password) {
-      return res.status(400).json({ message: "All fields are required" });
+      return res.status(400).json({
+        message: "All fields are required",
+        missingFields: [
+          !fullName && "fullName",
+          !email && "email",
+          !password && "password",
+        ].filter(Boolean),
+      });
     }
     if (password.length < 6) {
       return res
@@ -92,4 +99,53 @@ export async function signup(req, res) {
 export async function signout(req, res) {
   res.clearCookie("jwt");
   res.status(200).json({ message: "User signed out successfully" });
+}
+
+export async function onboard(req, res) {
+  const userId = req.user._id;
+
+  const { fullName, bio, nativeLanguage, learningLanguage, location } =
+    req.body || {};
+
+  if (!fullName || !bio || !nativeLanguage || !learningLanguage || !location) {
+    return res.status(400).json({
+      message: "All fields are required",
+      missingFields: [
+        !fullName && "fullName",
+        !bio && "bio",
+        !nativeLanguage && "nativeLanguage",
+        !learningLanguage && "learningLanguage",
+        !location && "location",
+      ].filter(Boolean),
+    });
+  }
+
+  try {
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      {
+        ...req.body,
+        isOnboarded: true,
+      },
+      {
+        new: true,
+      }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    await upsertStreamUser({
+      id: updatedUser._id.toString(),
+      name: updatedUser.fullName,
+      image: updatedUser.profilePic,
+    });
+    res
+      .status(200)
+      .json({ message: "User onboarded successfully", updatedUser });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Something went wrong", error });
+  }
 }
