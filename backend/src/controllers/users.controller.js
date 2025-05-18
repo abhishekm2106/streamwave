@@ -1,3 +1,4 @@
+import FriendRequest from "../models/FriendRequest.js";
 import User from "../models/Users.js";
 
 export async function getRecommendedUsers(req, res) {
@@ -22,16 +23,17 @@ export async function getRecommendedUsers(req, res) {
 
 export async function getMyFriends(req, res) {
   try {
-    const user = User.findById(req.user._id)
+    const user = await User.findById(req.user.id)
       .select("friends")
       .populate(
         "friends",
-        "fullName profilePicture nativeLanguage learningLanguage"
+        "fullName profilePic nativeLanguage learningLanguage"
       );
+
     res.status(200).json(user.friends);
   } catch (error) {
-    console.error("error in get my friends", error);
-    res.status(500).json({ message: "Internal server error" });
+    console.error("Error in getMyFriends controller", error.message);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 }
 
@@ -68,11 +70,9 @@ export async function sendFriendRequest(req, res) {
     });
 
     if (existingRequest) {
-      return res
-        .status(400)
-        .json({
-          message: "A friend request already exists between you and this user",
-        });
+      return res.status(400).json({
+        message: "A friend request already exists between you and this user",
+      });
     }
 
     const friendRequest = await FriendRequest.create({
