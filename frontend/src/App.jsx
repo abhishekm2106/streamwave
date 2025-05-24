@@ -20,7 +20,7 @@ const App = () => {
   const { theme } = useThemeStore();
   if (isLoading) return <PageLoader />;
   return (
-    <div className=" h-screen " data-theme={theme}>
+    <div data-theme={theme}>
       <Routes>
         <Route
           path="/"
@@ -81,8 +81,16 @@ const App = () => {
           }
         />
         <Route
-          path="/call"
-          element={isAuthenticated ? <CallPage /> : <Navigate to="/login" />}
+          path="/call/:id"
+          element={
+            isAuthenticated && isOnboarded ? (
+              <Layout>
+                <CallPage />
+              </Layout>
+            ) : (
+              <Navigate to={isOnboarded ? "/login" : "/onboarding"} />
+            )
+          }
         />
         <Route
           path="/chat/:id"
