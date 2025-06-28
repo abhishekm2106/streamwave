@@ -23,7 +23,6 @@ export async function signin(req, res) {
     res.cookie("jwt", token, {
       httpOnly: true,
       maxAge: 7 * 24 * 60 * 60 * 1000,
-      httpOnly: true,
       sameSite: "strict",
       secure: process.env.NODE_ENV === "production",
     });
@@ -81,7 +80,6 @@ export async function signup(req, res) {
       expiresIn: "7d",
     });
     res.cookie("jwt", token, {
-      httpOnly: true,
       maxAge: 7 * 24 * 60 * 60 * 1000,
       httpOnly: true,
       sameSite: "strict",

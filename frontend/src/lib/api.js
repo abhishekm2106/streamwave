@@ -66,3 +66,8 @@ export async function getStreamToken() {
   const response = await axiosInstance.get("/chat/token");
   return response.data;
 }
+
+export async function getMessages(roomId) {
+  const response = await axiosInstance.get(`chat/messages/${roomId}`);
+  return response.data;
+}
