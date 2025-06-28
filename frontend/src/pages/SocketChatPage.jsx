@@ -112,6 +112,14 @@ const SocketChatPage = () => {
     // });
 
     toast.success("calling...");
+    socket.on("timeout_declined_server", (newe) => {
+      console.log({ newe });
+      socket.off("timeout_declined_server");
+      setCalling(false);
+      toast.error(
+        "The person you are trying to call is not picking up the call"
+      );
+    });
   };
 
   const handleSendMessage = (e) => {

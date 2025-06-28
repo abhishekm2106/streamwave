@@ -103,6 +103,11 @@ io.on("connection", (socket) => {
     socket.broadcast.emit("decline_call", data);
   });
 
+  socket.on("timeout_declined", (data) => {
+    console.log("Call declined due to timeout: " + JSON.stringify(data));
+    socket.broadcast.emit("timeout_declined_server", data);
+  });
+
   socket.on("accept_call", (data) => {
     console.log("Call accepted from server: ");
     console.log(JSON.stringify(data));
