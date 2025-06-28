@@ -196,7 +196,6 @@ const SocketChatPage = () => {
             <h2 className=" text-xl font-semibold capitalize">
               {targetUser?.fullName}
             </h2>
-            {callUrl}
           </div>
           <div className="flex gap-2">
             <CallButton
